@@ -1,5 +1,5 @@
-# Core: Conditional Variance Penalties and Domain Shift Robustness
-TensorFlow implementation of 'Core', proposed in ["Conditional Variance Penalties and Domain Shift Robustness"](https://arxiv.org/abs/1710.11469).
+# CoRe: Conditional Variance Penalties and Domain Shift Robustness
+TensorFlow implementation of 'CoRe' (COnditional Variance REgularization), proposed in ["Conditional Variance Penalties and Domain Shift Robustness"](https://arxiv.org/abs/1710.11469).
 
 ## Method
 The aim is to build classifiers that are robust against specific interventions. These domain-shift interventions are defined in a causal graph, extending the framework of Gong et al (2016). In contrast to Gong et al. we work on a setting where the domain variable itself is latent but we can observe for some instances a so-called identifier variables that indicates, for example, presence of the same person or object across different images.

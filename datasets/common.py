@@ -73,26 +73,27 @@ def float32_feature(value):
     return tf.train.Feature(float_list=tf.train.FloatList(value=value))
 
 
-def img_dataset(directory, filenames, height, width, depth, dtype):
+def img_dataset(directory, filenames, height, width, depth, dtype,
+                buffer_size=20000):
     dataset = tf.data.TFRecordDataset(filenames)
     dataset = dataset.map(lambda x: datahandler.parse_function_img(
                                             x, height, width, depth,
                                             dtype_img=dtype))
-    return dataset_reshape(dataset)
+    return dataset_reshape(dataset, buffer_size)
 
 
-def matrix_dataset(directory, filenames, d_in):
+def matrix_dataset(directory, filenames, d_in, buffer_size=20000):
     dataset = tf.data.TFRecordDataset(filenames)
     dataset = dataset.map(lambda x: datahandler.parse_function_simple(x, d_in))
-    return dataset_reshape(dataset)
+    return dataset_reshape(dataset, buffer_size)
 
 
-def dataset_reshape(dataset):
+def dataset_reshape(dataset, buffer_size=20000):
     dataset = dataset.map(
               lambda a, b, c: (a,
                                tf.tile(tf.reshape(b, [1]), [tf.shape(a)[0]]),
                                tf.tile(tf.reshape(c, [1]), [tf.shape(a)[0]])))
-    dataset = dataset.shuffle(buffer_size=60000)
+    dataset = dataset.shuffle(buffer_size=buffer_size)
     dataset = dataset.flat_map(
                 lambda a, b, c: tf.data.Dataset.from_tensor_slices((a, b, c)))
     return dataset

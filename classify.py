@@ -12,6 +12,7 @@ def main():
                         help='id for run')
     parser.add_argument('--data_path', type=str, default='data/',
                         help='path to data files')
+    parser.add_argument('--buffer_size', type=int, default=15000)                    
     parser.add_argument('--log_dir', type=str, default='test/',
                         help='directory for logging')
     parser.add_argument('--img_size_w', type=int, default=28,

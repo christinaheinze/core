@@ -2,7 +2,7 @@ import numpy as np
 
 import tensorflow as tf
 
-from datasets import rotated_mnist, synthetic_nonlinear
+from datasets import rotated_mnist, rotated_mnist_conf, synthetic_nonlinear
 
 
 def load_data_set(args, filenames):
@@ -21,6 +21,17 @@ def load_data_set(args, filenames):
         _, test_filenames2 = synthetic_nonlinear.test2(args.data_path,
                                                        filenames)
         test_filenames = [test_filenames1, test_filenames2]
+    elif args.dataset == 'rotmnist_conf':
+        train_dataset, train_filenames = rotated_mnist_conf.train(
+                                args.data_path, filenames, args.buffer_size)
+        test_dataset, test_filenames1 = rotated_mnist_conf.test1(args.data_path,
+                                                filenames, args.buffer_size)
+        _, test_filenames2 = rotated_mnist_conf.test2(args.data_path,
+                                                filenames, args.buffer_size)
+        _, test_filenames3 = rotated_mnist_conf.test3(args.data_path,
+                                                filenames, args.buffer_size)
+        test_filenames = [test_filenames1, test_filenames2, test_filenames3]
+
     else:
         raise ValueError("setting unknown")
 

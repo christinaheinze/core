@@ -17,12 +17,12 @@ python3 classify.py  \
 --h2=500 \
 --no-img_data \
 --lambda_reg=0.001 \
---learning_rate_class=0.01 \
+--learning_rate_class=0.001 \
 --log_dir='test/' \
 --n_input=2 \
 --do-not-normalize \
 --num_classes=2 \
---num_epochs_class=25 \
+--num_epochs_class=30 \
 --no-regression \
 --save_every=1000 \
 --weight_countfact_loss=1

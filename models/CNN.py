@@ -174,14 +174,9 @@ class Estimator():
                  if 'cnn' in v.name and 'bias' not in v.name])
 
             if self.args.classifier == "counterfactual":
-                self.partitions_y = tf.dynamic_partition(
-                                                        self.logits,
-                                                        self.group,
-                                                        self.args.batch_size)
-                self.mean = [tf.cond(tf.shape(partition)[0] > 1,
-                             lambda: tf.nn.moments(partition, axes=[0])[0],
-                             lambda: tf.zeros(out_dim))
-                             for partition in self.partitions_y]
+                self.partitions_y = tf.dynamic_partition(self.logits,
+                                                         self.group,
+                                                         self.args.batch_size)
 
                 self.sum_non_zeros = tf.reduce_sum([tf.cond(
                                         tf.shape(partition)[0] > 1,
@@ -191,23 +186,16 @@ class Estimator():
                 self.summaries.append(tf.summary.scalar("num_cfs",
                                                         self.sum_non_zeros))
 
-                self.mean_devs_over_m_i_instances = [tf.cond(
-                                        tf.shape(partition[0])[0] > 1,
-                                        lambda: tf.reduce_mean(
-                                                tf.reduce_sum(tf.square(
-                                                    tf.subtract(partition[0],
-                                                                partition[1])),
-                                                              axis=1)),
-                                        lambda: tf.constant(0.0))
-                                        for partition in list(
-                                            zip(self.partitions_y, self.mean))]
+                self.part_var = [tf.cond(tf.shape(partition)[0] > 1,
+                                         lambda: tf.reduce_sum(
+                                             tf.nn.moments(partition, axes=[0])[1]),
+                                         lambda: tf.constant(0.0))
+                                 for partition in self.partitions_y]
 
                 self.countfact_loss = self.cfl_rate * tf.cond(
                             tf.equal(self.sum_non_zeros, tf.constant(0.0)),
                             lambda: tf.constant(0.0),
-                            lambda: tf.reduce_sum(
-                                            self.mean_devs_over_m_i_instances
-                                            )/self.sum_non_zeros)
+                            lambda: tf.reduce_sum(self.part_var)/self.sum_non_zeros)
 
                 self.loss += self.args.weight_countfact_loss * \
                     self.countfact_loss
